@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Phishing URL Detector</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    />
+
+    <style>
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
+            color: #e5e7eb;
+        }
+        .page-wrapper {
+            min-height: 100vh;
+        }
+        .brand-title {
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+        .card {
+            background-color: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
+        }
+        .form-control {
+            background-color: #020617;
+            border-color: #334155;
+            color: #e5e7eb;
+        }
+        .form-control:focus {
+            background-color: #020617;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.25);
+            color: #e5e7eb;
+        }
+        .btn-detect {
+            background: linear-gradient(135deg, #22c55e, #4ade80);
+            border: none;
+            color: #022c22;
+            font-weight: 600;
+        }
+        .btn-detect:hover {
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            color: #022c22;
+        }
+        .confidence-text {
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+        .badge-model {
+            font-size: 0.7rem;
+            letter-spacing: 0.06em;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper d-flex flex-column">
+        <!-- Navbar -->
+        <nav class="navbar navbar-dark bg-dark border-bottom border-secondary">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1 brand-title">
+                    🛡️ Phishing URL Detector
+                </span>
+                <span class="badge bg-success-subtle text-success-emphasis badge-model">
+                    ML Models: SVM & Gradient Boosting
+                </span>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="flex-grow-1 d-flex align-items-center">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 col-md-8">
+                        <div class="card rounded-4">
+                            <div class="card-body p-4 p-md-5">
+                                <h5 class="card-title mb-3 text-light">
+                                    Check if a URL is phishing or legitimate
+                                </h5>
+                                <p class="text-muted small mb-4">
+                                    Paste any URL below. The model will analyze structural and lexical
+                                    features (length, subdomains, suspicious words, HTTPS usage, etc.)
+                                    and predict whether the URL is likely to be a phishing attempt.
+                                </p>
+
+                                <!-- URL form -->
+                                <form method="POST" class="mb-3">
+                                    <div class="mb-3">
+                                        <label for="url" class="form-label">URL</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="url"
+                                            name="url"
+                                            placeholder="https://example.com/login"
+                                            required
+                                        />
+                                    </div>
+                                    <button type="submit" class="btn btn-detect w-100">
+                                        Analyze URL
+                                    </button>
+                                </form>
+
+                                <!-- Prediction result -->
+                                {% if prediction is not none %}
+                                    {% if prediction == 1 %}
+                                        <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+                                            <div>
+                                                <strong>🚨 Phishing detected!</strong><br />
+                                                This URL is likely a <strong>PHISHING</strong> link. Be very cautious
+                                                before entering any credentials or sensitive information.
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="alert alert-success d-flex align-items-center mt-3" role="alert">
+                                            <div>
+                                                <strong>✅ Looks safe.</strong><br />
+                                                This URL is likely <strong>LEGITIMATE</strong> based on the model.
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if confidence is not none %}
+                                        <p class="confidence-text mt-2 mb-0">
+                                            Model confidence: <strong>{{ "%.4f"|format(confidence) }}</strong>
+                                        </p>
+                                    {% endif %}
+                                {% else %}
+                                    <p class="text-muted small mt-3 mb-0">
+                                        Tip: try URLs like
+                                        <code>https://www.google.com</code> (legit) or
+                                        <code>http://free-gift-card-login.xyz</code> (phishing-style)
+                                        to see how the model responds.
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <p class="text-center text-secondary mt-3 mb-0 small">
+                            Built with <span class="text-success">Machine Learning</span> |
+                            Models: SVM, Gradient Boosting | Student Project
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS (optional, for future components) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
